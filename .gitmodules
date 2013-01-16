@@ -1,0 +1,3 @@
+[submodule "DockPanel"]
+	path = DockPanel
+	url = git@github.com:VirusFree/dockpanelsuite.git
