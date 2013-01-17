@@ -57,6 +57,12 @@
     <Compile Include="BaseDoc.designer.cs">
       <DependentUpon>BaseDoc.cs</DependentUpon>
     </Compile>
+    <Compile Include="TerminalDoc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TerminalDoc.designer.cs">
+      <DependentUpon>TerminalDoc.cs</DependentUpon>
+    </Compile>
     <Compile Include="DummyDoc.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +96,9 @@
     </Compile>
     <EmbeddedResource Include="BaseDoc.resx">
       <DependentUpon>BaseDoc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TerminalDoc.resx">
+      <DependentUpon>TerminalDoc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DummyDoc.resx">
       <DependentUpon>DummyDoc.cs</DependentUpon>

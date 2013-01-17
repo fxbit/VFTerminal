@@ -146,7 +146,7 @@ namespace VFTerminal
 
         private void newTerminalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var frm = new DummyDoc(this);
+            var frm = new TerminalDoc(this);
             frm.Show(dockPanel);
             MakeFormVisible(frm);
         }
