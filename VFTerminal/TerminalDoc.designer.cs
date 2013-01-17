@@ -47,6 +47,7 @@ namespace VFTerminal
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TerminalDoc";
             this.Text = "Terminal Session";
+            this.Load += new System.EventHandler(this.TerminalDoc_Load);
             this.ResumeLayout(false);
 
 		}
