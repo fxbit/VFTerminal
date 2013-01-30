@@ -77,7 +77,7 @@ namespace VFTerminal
             listBox1.Items.Clear();
             lock (Profiles)
                 foreach (var profile in Profiles)
-                    listBox1.Items.Add(profile);
+                    listBox1.Items.Add(profile.Value);
         }
 
         //----------------------------------------------------------------------------------------------------------------------
