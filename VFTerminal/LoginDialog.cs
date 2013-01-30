@@ -12,18 +12,49 @@ namespace VFTerminal
 {
     public partial class LoginDialog : Form
     {
+        //----------------------------------------------------------------------------------------------------------------------
+
+        public static Dictionary<string, Profile> Profiles = new Dictionary<string, Profile>();
+
+        //----------------------------------------------------------------------------------------------------------------------
+
         [Serializable]
-        public struct Descriptor
+        public struct Profile
         {
-            public bool RememberServer;
-            public bool RememberUsername;
-            public bool RememberPassword;
+            public bool isValid;
+            public string ProfileName;
             public string Server;
             public string Username;
             public string Password;
         }
 
-        public LoginDialog(Descriptor desc)
+        //----------------------------------------------------------------------------------------------------------------------
+
+        public Profile SelectedProfile = new Profile();
+
+        //----------------------------------------------------------------------------------------------------------------------
+
+        static LoginDialog()
+        {
+            //load profiles..
+            lock (Profiles)
+                try
+                {
+                    //load..
+                    Profiles = (Dictionary<string, Profile>)Serialization_Master.Serializer.DeSerialize_Object_From_File("profiles.bin", Decompress: true);
+                    //check..
+                    if (Profiles == null)
+                        Profiles = new Dictionary<string, Profile>();
+                }
+                catch
+                {
+                    Profiles = new Dictionary<string, Profile>();
+                }
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
+
+        public LoginDialog(Profile desc)
         {
             InitializeComponent();
             //setup items from descriptor
@@ -31,24 +62,91 @@ namespace VFTerminal
             txt_username.Text = desc.Username;
             txt_server.Text = desc.Password;            
         }
+        
+        //----------------------------------------------------------------------------------------------------------------------
+
+        private void LoginDialog_Load(object sender, EventArgs e)
+        {
+            RefreshProfiles();
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
+
+        private void RefreshProfiles()
+        {
+            listBox1.Items.Clear();
+            lock (Profiles)
+                foreach (var profile in Profiles)
+                    listBox1.Items.Add(profile);
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (listBox1.SelectedIndex < 0)
+            {
+                MessageBox.Show("You must select a profile", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            SelectedProfile = (Profile)listBox1.SelectedItem;
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 
-        public Descriptor getDescritor() 
+        //----------------------------------------------------------------------------------------------------------------------
+
+        private void button3_Click(object sender, EventArgs e)
         {
-            return new Descriptor()
+            //trim..
+            txt_prof_name.Text = txt_prof_name.Text.Trim();
+
+            //check fields
+            if (txt_prof_name.Text == ""
+                ||
+                txt_username.Text == ""
+                ||
+                txt_server.Text == ""
+                ||
+                txt_pass.Text == ""
+                )
             {
-                RememberServer = chk_remember_server.Checked,
-                RememberUsername = chk_remeber_username.Checked,
-                RememberPassword = chk_remember_pass.Checked,
+                MessageBox.Show("All fields must be filled", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //check if exists
+            if (Profiles.ContainsKey(txt_prof_name.Text))
+                if (MessageBox.Show("A profile with the same name already exists.Do you wish to overwrite it?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.No)
+                    return;
+
+            //create profile
+            var profile = new Profile()
+            {
+                isValid = true,
+                ProfileName = txt_prof_name.Text,
                 Server = txt_server.Text,
                 Username = txt_username.Text,
-                Password = txt_pass.Text,
+                Password = txt_pass.Text
             };
+
+            //write-overwrite            
+            if (Profiles.ContainsKey(txt_prof_name.Text))
+                Profiles[txt_prof_name.Text] = profile;
+            else
+                Profiles.Add(profile.ProfileName, profile);
+
+            //save/overwrite file
+            lock (Profiles)
+            {
+                Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
+            }
+
+            //refresh list
+            RefreshProfiles();
         }
+
+        //----------------------------------------------------------------------------------------------------------------------
+        
     }
 }

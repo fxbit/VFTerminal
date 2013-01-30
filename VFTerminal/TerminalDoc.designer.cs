@@ -28,8 +28,10 @@ namespace VFTerminal
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TerminalDoc));
             this.vfTerminalControl1 = new VFTerminal.TerminalControl.VFTerminalControl();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // vfTerminalControl1
@@ -39,6 +41,11 @@ namespace VFTerminal
             this.vfTerminalControl1.Name = "vfTerminalControl1";
             this.vfTerminalControl1.Size = new System.Drawing.Size(883, 515);
             this.vfTerminalControl1.TabIndex = 0;
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // TerminalDoc
             // 
@@ -54,6 +61,7 @@ namespace VFTerminal
 		#endregion
 
         private TerminalControl.VFTerminalControl vfTerminalControl1;
+        private System.Windows.Forms.Timer timer1;
 
     }
 }

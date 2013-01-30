@@ -20,18 +20,15 @@ namespace VFTerminal
         public struct SaveLoadDescriptor
         {
             public bool isValid;
-            public LoginDialog.Descriptor LoginDescriptor;
+            public LoginDialog.Profile LoginProfile;
         }
 
         SaveLoadDescriptor Descriptor = new SaveLoadDescriptor()
         {
             isValid = true,
-            LoginDescriptor = new LoginDialog.Descriptor()
+            LoginProfile = new LoginDialog.Profile()
             {
-
-                Server = "",
-                Username = "",
-                Password = "",
+                isValid=false,
             }
         };
         //-------------------------------------------------------------------------------------------------------------------------------
@@ -79,25 +76,31 @@ namespace VFTerminal
 
         private void TerminalDoc_Load(object sender, EventArgs e)
         {
-            if (!Descriptor.LoginDescriptor.RememberPassword
-                ||
-                !Descriptor.LoginDescriptor.RememberServer
-                ||
-                !Descriptor.LoginDescriptor.RememberUsername
-                )
+            
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //stop..
+            timer1.Enabled = false;
+
+            if (Descriptor.LoginProfile.isValid == false)
             {
                 //ask..
-                var frm = new LoginDialog(Descriptor.LoginDescriptor);
+                var frm = new LoginDialog(Descriptor.LoginProfile);
                 if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    Descriptor.LoginDescriptor = frm.getDescritor();//update descriptor
+                    Descriptor.LoginProfile = frm.SelectedProfile;
                 else
+                {
+                    this.Close();
                     return;
+                }
             }
 
             //attempt connection
-            this.vfTerminalControl1.UserName = Descriptor.LoginDescriptor.Username;
-            this.vfTerminalControl1.Password = Descriptor.LoginDescriptor.Password;
-            this.vfTerminalControl1.Host = Descriptor.LoginDescriptor.Server;
+            this.vfTerminalControl1.UserName = Descriptor.LoginProfile.Username;
+            this.vfTerminalControl1.Password = Descriptor.LoginProfile.Password;
+            this.vfTerminalControl1.Host = Descriptor.LoginProfile.Server;
             this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
 
             this.vfTerminalControl1.Connect();
