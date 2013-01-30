@@ -73,7 +73,7 @@
             this.txt_username.Location = new System.Drawing.Point(15, 78);
             this.txt_username.Name = "txt_username";
             this.txt_username.Size = new System.Drawing.Size(178, 20);
-            this.txt_username.TabIndex = 9;
+            this.txt_username.TabIndex = 1;
             // 
             // txt_pass
             // 
@@ -81,7 +81,7 @@
             this.txt_pass.Name = "txt_pass";
             this.txt_pass.PasswordChar = '*';
             this.txt_pass.Size = new System.Drawing.Size(178, 20);
-            this.txt_pass.TabIndex = 11;
+            this.txt_pass.TabIndex = 2;
             this.txt_pass.UseSystemPasswordChar = true;
             // 
             // txt_server
@@ -89,14 +89,14 @@
             this.txt_server.Location = new System.Drawing.Point(15, 28);
             this.txt_server.Name = "txt_server";
             this.txt_server.Size = new System.Drawing.Size(178, 20);
-            this.txt_server.TabIndex = 8;
+            this.txt_server.TabIndex = 0;
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(118, 165);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 10;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Connect";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -106,7 +106,7 @@
             this.button2.Location = new System.Drawing.Point(14, 165);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 15;
+            this.button2.TabIndex = 4;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -119,7 +119,7 @@
             this.chk_remeber_username.Location = new System.Drawing.Point(116, 61);
             this.chk_remeber_username.Name = "chk_remeber_username";
             this.chk_remeber_username.Size = new System.Drawing.Size(77, 17);
-            this.chk_remeber_username.TabIndex = 16;
+            this.chk_remeber_username.TabIndex = 6;
             this.chk_remeber_username.Text = "Remember";
             this.chk_remeber_username.UseVisualStyleBackColor = true;
             // 
@@ -130,7 +130,7 @@
             this.chk_remember_pass.Location = new System.Drawing.Point(116, 109);
             this.chk_remember_pass.Name = "chk_remember_pass";
             this.chk_remember_pass.Size = new System.Drawing.Size(77, 17);
-            this.chk_remember_pass.TabIndex = 17;
+            this.chk_remember_pass.TabIndex = 7;
             this.chk_remember_pass.Text = "Remember";
             this.chk_remember_pass.UseVisualStyleBackColor = true;
             // 
@@ -143,7 +143,7 @@
             this.chk_remember_server.Location = new System.Drawing.Point(116, 13);
             this.chk_remember_server.Name = "chk_remember_server";
             this.chk_remember_server.Size = new System.Drawing.Size(77, 17);
-            this.chk_remember_server.TabIndex = 18;
+            this.chk_remember_server.TabIndex = 5;
             this.chk_remember_server.Text = "Remember";
             this.chk_remember_server.UseVisualStyleBackColor = true;
             // 
@@ -152,7 +152,7 @@
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(203, 200);
+            this.ClientSize = new System.Drawing.Size(211, 205);
             this.Controls.Add(this.txt_pass);
             this.Controls.Add(this.txt_username);
             this.Controls.Add(this.txt_server);

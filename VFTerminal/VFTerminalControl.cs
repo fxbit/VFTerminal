@@ -12,6 +12,8 @@ namespace VFTerminal.TerminalControl
 {
     public partial class VFTerminalControl : UserControl
     {
+        public bool isConnected = false;
+
         public string UserName;
         public string Password;
         public string Host;
@@ -26,28 +28,34 @@ namespace VFTerminal.TerminalControl
         }
 
 
-
-        public bool Connect()
+        public Task<bool> Connect()
         {
             terminalControl1.UserName = UserName;
             terminalControl1.Password = Password;
             terminalControl1.Host = Host;
             terminalControl1.Method = Method;
-            //start task
-            //return Task<bool>.Run(() =>
-            //{
-                //try connection
-                terminalControl1.Connect();
 
-                if (terminalControl1.TerminalPane.ConnectionTag == null)
-                    return false;
-                else
-                    try { terminalControl1.SetPaneColors(Color.Green, Color.Black); }
-                    catch
+            //start connection
+            return Task.Run<bool>(
+                () =>
+                {
+                    //invoke connect (cross-thread operations)
+                    this.Invoke((MethodInvoker)(() => terminalControl1.Connect()));
+
+                    if (terminalControl1.TerminalPane.ConnectionTag == null)
                     {
+                        isConnected = false;
+                        return false;
                     }
-                return true;
-           // });
+                    else
+                    {
+                        isConnected = true;
+                        try { terminalControl1.SetPaneColors(Color.Green, Color.Black); }
+                        catch { }
+                        return true;
+                    }
+                }
+            );
         }
     }
 }
