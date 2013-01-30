@@ -150,6 +150,15 @@ namespace VFTerminal
             frm.Show(dockPanel);
             MakeFormVisible(frm);
         }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        private void newDummyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var frm = new DummyDoc(this);
+            frm.Show(dockPanel);
+            MakeFormVisible(frm);
+        }
         
         //-------------------------------------------------------------------------------------------------------------------------------
 

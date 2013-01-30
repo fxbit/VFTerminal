@@ -19,9 +19,21 @@ namespace VFTerminal
         [Serializable]
         public struct SaveLoadDescriptor
         {
-            public string test1;
+            public bool isValid;
+            public LoginDialog.Descriptor LoginDescriptor;
         }
 
+        SaveLoadDescriptor Descriptor = new SaveLoadDescriptor()
+        {
+            isValid = true,
+            LoginDescriptor = new LoginDialog.Descriptor()
+            {
+
+                Server = "",
+                Username = "",
+                Password = "",
+            }
+        };
         //-------------------------------------------------------------------------------------------------------------------------------
         #endregion
 
@@ -43,10 +55,12 @@ namespace VFTerminal
             InitializeComponent();
         }
         //-------------------------------------------------------------------------------------------------------------------------------
-        public TerminalDoc(MainFrm GameEditorFrm, object Descriptor)
+        public TerminalDoc(MainFrm GameEditorFrm, SaveLoadDescriptor Descriptor)
             : base(GameEditorFrm)
         {
             InitializeComponent();
+            //get proper descriptor
+            this.Descriptor = Descriptor;
         }
         //-------------------------------------------------------------------------------------------------------------------------------
         #endregion
@@ -58,27 +72,37 @@ namespace VFTerminal
 
         public override object GetSaveLoadDescriptor()
         {
-            return new SaveLoadDescriptor()
-            {
-            };
+            return Descriptor;
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
 
         private void TerminalDoc_Load(object sender, EventArgs e)
         {
-            var frm = new LoginDialog();
-            if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (!Descriptor.LoginDescriptor.RememberPassword
+                ||
+                !Descriptor.LoginDescriptor.RememberServer
+                ||
+                !Descriptor.LoginDescriptor.RememberUsername
+                )
             {
-                this.vfTerminalControl1.UserName = frm.usertextBox3.Text;
-                this.vfTerminalControl1.Password = frm.passtextBox2.Text;
-                this.vfTerminalControl1.Host = frm.servertextBox1.Text;
-                this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
-
-                this.vfTerminalControl1.Connect();
-
-                this.vfTerminalControl1.Focus();
+                //ask..
+                var frm = new LoginDialog(Descriptor.LoginDescriptor);
+                if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    Descriptor.LoginDescriptor = frm.getDescritor();//update descriptor
+                else
+                    return;
             }
+
+            //attempt connection
+            this.vfTerminalControl1.UserName = Descriptor.LoginDescriptor.Username;
+            this.vfTerminalControl1.Password = Descriptor.LoginDescriptor.Password;
+            this.vfTerminalControl1.Host = Descriptor.LoginDescriptor.Server;
+            this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
+
+            this.vfTerminalControl1.Connect();
+
+            this.vfTerminalControl1.Focus();
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------

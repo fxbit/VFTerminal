@@ -27,16 +27,27 @@ namespace VFTerminal.TerminalControl
 
 
 
-        public void Connect()
+        public bool Connect()
         {
             terminalControl1.UserName = UserName;
             terminalControl1.Password = Password;
             terminalControl1.Host = Host;
             terminalControl1.Method = Method;
-            terminalControl1.Connect();
+            //start task
+            //return Task<bool>.Run(() =>
+            //{
+                //try connection
+                terminalControl1.Connect();
 
-            terminalControl1.SetPaneColors(Color.Blue, Color.Black);
-            terminalControl1.Focus();
+                if (terminalControl1.TerminalPane.ConnectionTag == null)
+                    return false;
+                else
+                    try { terminalControl1.SetPaneColors(Color.Green, Color.Black); }
+                    catch
+                    {
+                    }
+                return true;
+           // });
         }
     }
 }
