@@ -25,6 +25,9 @@ namespace VFTerminal.TerminalControl
             : base()
         {
             InitializeComponent();
+
+            //register stupid poderosa msges..
+            terminalControl1.TerminalPane.OnMouseDownAction = terminalControl1_MouseDown;
         }
 
 
@@ -63,7 +66,8 @@ namespace VFTerminal.TerminalControl
 
         private void terminalControl1_MouseDown(object sender, MouseEventArgs e)
         {
-            MessageBox.Show("hi");
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+                terminalControl1.PasteTextFromClipboard();
         }
     }
 }

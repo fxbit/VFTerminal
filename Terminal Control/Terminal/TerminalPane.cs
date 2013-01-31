@@ -1199,8 +1199,13 @@ namespace Poderosa.Terminal {
 		/*
 		 *テキストの選択関係 
 		 */
+        public Action<object, MouseEventArgs> OnMouseDownAction =null;
 		protected override void OnMouseDown(MouseEventArgs args) {
 			base.OnMouseDown(args);
+
+            if (OnMouseDownAction != null)
+                OnMouseDownAction(this, args);
+
 			if(args.Button!=MouseButtons.Left) return;
 			if(!_fakeVisible) return;
 			CommitTransientScrollBar();
@@ -1231,6 +1236,7 @@ namespace Poderosa.Terminal {
 			}
 			Invalidate();
 		}
+        
 		protected override void OnMouseMove(MouseEventArgs args) {
 			base.OnMouseMove(args);
 			if(!_fakeVisible) return;
