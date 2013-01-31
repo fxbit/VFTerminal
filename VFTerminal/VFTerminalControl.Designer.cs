@@ -35,13 +35,17 @@
             // 
             this.terminalControl1.AuthType = Poderosa.ConnectionParam.AuthType.Password;
             this.terminalControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.terminalControl1.Host = "";
             this.terminalControl1.IdentifyFile = "";
             this.terminalControl1.Location = new System.Drawing.Point(0, 0);
             this.terminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
             this.terminalControl1.Name = "terminalControl1";
+            this.terminalControl1.Password = "";
             this.terminalControl1.Size = new System.Drawing.Size(537, 464);
             this.terminalControl1.TabIndex = 0;
             this.terminalControl1.Text = "terminalControl1";
+            this.terminalControl1.UserName = "";
+            this.terminalControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.terminalControl1_MouseDown);
             // 
             // VFTerminalControl
             // 

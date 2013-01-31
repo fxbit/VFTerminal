@@ -152,6 +152,34 @@ namespace VFTerminal
         }
 
         //----------------------------------------------------------------------------------------------------------------------
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex < 0)
+            {
+                MessageBox.Show("You must select a profile", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            //get profile
+            var profile = (Profile)listBox1.SelectedItem;
+            //ask..
+            if (MessageBox.Show("Are you sure you want to delete profile " + profile.ProfileName, "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+                return;
+            //remove and save
+            lock (Profiles)
+            {
+                if (Profiles.ContainsKey(profile.ProfileName))
+                {
+                    Profiles.Remove(profile.ProfileName);
+                    Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
+                }
+            }
+
+            //refresh list
+            RefreshProfiles();
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
         
     }
 }

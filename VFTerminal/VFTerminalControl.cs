@@ -50,12 +50,20 @@ namespace VFTerminal.TerminalControl
                     else
                     {
                         isConnected = true;
-                        try { terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black); }
+                        try 
+                        { 
+                            terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black);                            
+                        }
                         catch { }
                         return true;
                     }
                 }
             );
+        }
+
+        private void terminalControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            MessageBox.Show("hi");
         }
     }
 }
