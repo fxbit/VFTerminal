@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace VFTerminal
 {
@@ -103,9 +104,9 @@ namespace VFTerminal
             this.vfTerminalControl1.Host = Descriptor.LoginProfile.Server;
             this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
 
+            label1.Visible = true;
             this.vfTerminalControl1.Connect();
-
-            this.vfTerminalControl1.Focus();
+            label1.Visible = false;
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
