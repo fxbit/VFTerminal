@@ -37,6 +37,7 @@ namespace WalburySoftware
         private AuthType _authType = AuthType.Password;
         private ConnectionMethod _connectionMethod;
         private TerminalPane _terminalPane;
+        ConnectionTag ct = null;
         #endregion
         #region Constructors
         public TerminalControl(string UserName, string Password, string Hostname, ConnectionMethod Method)
@@ -71,32 +72,10 @@ namespace WalburySoftware
         { 
         
         }
-        public void Connect()
+
+        public Action ConnectFinishedCallBack;
+        public void Connect(Control control)
         {
-            #region old stuff
-            /*
-            Poderosa.ConnectionParam.LogType logType = Poderosa.ConnectionParam.LogType.Default;
-            string file = null;
-            if (this.TerminalPane.Connection != null)
-            {
-                logType = this.TerminalPane.Connection.LogType;
-                file = this.TerminalPane.Connection.LogPath;
-                //GApp.GetConnectionCommandTarget().Close();
-                this.TerminalPane.Connection.Close();
-                this.TerminalPane.Detach();
-            }
-
-
-            SSHTerminalParam p = new SSHTerminalParam((Poderosa.ConnectionParam.ConnectionMethod)this.Method, this.Host, this.UserName, this.Password);
-            
-            GApp.GlobalCommandTarget.SilentNewConnection(p);
-            
-
-            if (file != null)
-                this.SetLog((LogType) logType, file, true);
-            */
-            #endregion
-
             // Save old log info in case this is a reconnect
             Poderosa.ConnectionParam.LogType logType = Poderosa.ConnectionParam.LogType.Default;
             string file = null;
@@ -126,17 +105,31 @@ namespace WalburySoftware
                 SocketWithTimeout swt;
                 swt = new SSHConnector((Poderosa.ConnectionParam.SSHTerminalParam)sshp, sz, sshp.Passphrase, (HostKeyCheckCallback)null);
                 swt.AsyncConnect(s, sshp.Host, sshp.Port);
-                ConnectionTag ct = s.Wait(swt);
+                //var thread = new Thread(() =>
+                //    {
+                        while (swt.Succeeded == false)
+                        {
+                            Application.DoEvents();
+                        }
+                        ct = s.Wait(swt);
 
-                this.TerminalPane.FakeVisible = true;
+                        control.Invoke((MethodInvoker)(
+                            () =>
+                            {
+                                this.TerminalPane.FakeVisible = true;
 
-                this.TerminalPane.Attach(ct);
-                ct.Receiver.Listen();
-                //-------------------------------------------------------------
-                if (file != null)
-                    this.SetLog((LogType)logType, file, true);
-                this.TerminalPane.ConnectionTag.RenderProfile = new RenderProfile();
-                this.SetPaneColors(Color.LightBlue, Color.Black);
+                                this.TerminalPane.Attach(ct);
+                                ct.Receiver.Listen();
+                                //-------------------------------------------------------------
+                                if (file != null)
+                                    this.SetLog((LogType)logType, file, true);
+                                this.TerminalPane.ConnectionTag.RenderProfile = new RenderProfile();
+                                this.SetPaneColors(Color.LightBlue, Color.Black);
+                            }
+                            ));
+                 //   });
+                //start thread
+                //thread.Start();
             }
             catch
             {

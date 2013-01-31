@@ -103,10 +103,8 @@ namespace VFTerminal
             this.vfTerminalControl1.Password = Descriptor.LoginProfile.Password;
             this.vfTerminalControl1.Host = Descriptor.LoginProfile.Server;
             this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
-
-            label1.Visible = true;
-            this.vfTerminalControl1.Connect();
-            label1.Visible = false;
+                        
+            this.vfTerminalControl1.ConnectAsync();
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------

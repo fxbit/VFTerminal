@@ -29,11 +29,13 @@
         private void InitializeComponent()
         {
             this.terminalControl1 = new WalburySoftware.TerminalControl();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // terminalControl1
             // 
             this.terminalControl1.AuthType = Poderosa.ConnectionParam.AuthType.Password;
+            this.terminalControl1.BackColor = System.Drawing.SystemColors.Control;
             this.terminalControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.terminalControl1.Host = "";
             this.terminalControl1.IdentifyFile = "";
@@ -47,18 +49,33 @@
             this.terminalControl1.UserName = "";
             this.terminalControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.terminalControl1_MouseDown);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(19, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(186, 33);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Connecting...";
+            this.label1.Visible = false;
+            // 
             // VFTerminalControl
             // 
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.terminalControl1);
             this.Name = "VFTerminalControl";
             this.Size = new System.Drawing.Size(537, 464);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private WalburySoftware.TerminalControl terminalControl1;
+        private System.Windows.Forms.Label label1;
 
     }
 }

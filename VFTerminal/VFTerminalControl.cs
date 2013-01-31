@@ -31,34 +31,44 @@ namespace VFTerminal.TerminalControl
         }
 
 
-        public Task<bool> Connect()
+        public void ConnectAsync(Action OnConnectionFinish = null, Action OnConnectionSuccessfull = null, Action OnConnectionFailed = null)
         {
             terminalControl1.UserName = UserName;
             terminalControl1.Password = Password;
             terminalControl1.Host = Host;
             terminalControl1.Method = Method;
 
+            label1.Visible = true;
             //start connection
-            return Task.Run<bool>(
+            Task.Run(
                 () =>
                 {
-                    //invoke connect (cross-thread operations)
-                    this.Invoke((MethodInvoker)(() => terminalControl1.Connect()));
+                    //connect
+                    terminalControl1.Connect(this);
+                    this.Invoke((MethodInvoker)(() => label1.Visible = false));
+                    
 
+                    //run callback
+                    if (OnConnectionFinish != null)
+                        OnConnectionFinish();
+
+                    //check results
                     if (terminalControl1.TerminalPane.ConnectionTag == null)
                     {
                         isConnected = false;
-                        return false;
+                        if (OnConnectionFailed != null)
+                            OnConnectionFailed();
                     }
                     else
                     {
                         isConnected = true;
-                        try 
-                        { 
-                            terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black);                            
+                        try
+                        {
+                            terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black);
                         }
                         catch { }
-                        return true;
+                        if (OnConnectionSuccessfull != null)
+                            OnConnectionSuccessfull();
                     }
                 }
             );
