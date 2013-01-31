@@ -26,6 +26,11 @@ namespace VFTerminal
             public string Server;
             public string Username;
             public string Password;
+
+            public override string ToString()
+            {
+                return ProfileName;
+            }
         }
 
         //----------------------------------------------------------------------------------------------------------------------
