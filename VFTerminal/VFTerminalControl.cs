@@ -28,6 +28,7 @@ namespace VFTerminal.TerminalControl
 
             //register stupid poderosa msges..
             terminalControl1.TerminalPane.OnMouseDownAction = terminalControl1_MouseDown;
+            terminalControl1.TerminalPane.OnOnKeyDownAction = terminalControl1_KeyDown;
         }
 
 
@@ -78,6 +79,11 @@ namespace VFTerminal.TerminalControl
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Middle)
                 terminalControl1.PasteTextFromClipboard();
+        }
+
+        private void terminalControl1_KeyDown(object sender, KeyEventArgs e)
+        {
+            //..
         }
     }
 }

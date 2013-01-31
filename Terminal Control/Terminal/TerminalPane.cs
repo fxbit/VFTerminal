@@ -640,7 +640,7 @@ namespace Poderosa.Terminal {
 				GEnv.Frame.ProcessShortcutKey(key);
 				return true;
 			}
-
+            
 			//Debug.WriteLine(string.Format("Pane ProcessDialogKey {0}", key & Keys.KeyCode));
 			//カーソルキーをContainerControl#ProcessDialogKeyに渡すとフォーカスが移動しちゃう
 			Keys modifiers = key & Keys.Modifiers;
@@ -731,7 +731,7 @@ namespace Poderosa.Terminal {
 		private static bool IsSequenceKey(Keys key) {
 			Keys body = key & Keys.KeyCode;
 			return ((int)Keys.F1 <= (int)body && (int)body <= (int)Keys.F12) ||
-				body==Keys.Insert || body==Keys.Delete || IsScrollKey(key);
+                body == Keys.Insert || body == Keys.Delete || body == Keys.Home || IsScrollKey(key);
 		}
 		private static bool IsScrollKey(Keys key) {
 			return key==Keys.Up || key==Keys.Down ||
@@ -760,21 +760,27 @@ namespace Poderosa.Terminal {
 				SendBytes(t);
 			}
 		}
+
+        public Action<object, KeyEventArgs> OnOnKeyDownAction = null;
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            //Console.WriteLine(e.KeyData.ToString());
-            //if (e.KeyCode == Keys.Insert)
-            //    return;
+            if (OnOnKeyDownAction != null)
+                OnOnKeyDownAction(this, e);
             base.OnKeyDown(e);
         }
+
+        public Action<object, KeyPressEventArgs> OnOnKeyPressAction = null;
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            //Console.WriteLine(e.KeyChar);
+            if (OnOnKeyPressAction != null)
+                OnOnKeyPressAction(this, e);
             base.OnKeyPress(e);
         }
+        public Action<object, KeyEventArgs> OnOnKeyUpAction = null;
         protected override void OnKeyUp(KeyEventArgs e)
         {
-
+            if (OnOnKeyUpAction != null)
+                OnOnKeyUpAction(this, e);
             //Console.WriteLine(e.KeyCode.ToString());
 
             #region all this gay shit is just to allow "Shift + Insert" to paste from clipboard

@@ -47,6 +47,7 @@
             this.terminalControl1.TabIndex = 0;
             this.terminalControl1.Text = "terminalControl1";
             this.terminalControl1.UserName = "";
+            this.terminalControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.terminalControl1_KeyDown);
             this.terminalControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.terminalControl1_MouseDown);
             // 
             // label1

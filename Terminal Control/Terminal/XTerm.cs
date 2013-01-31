@@ -401,13 +401,13 @@ namespace Poderosa.Terminal
 				if(key==Keys.Insert)
 					r[2] = (byte)'2';
 				else if(key==Keys.Home)
-					r[2] = (byte)'7';
+					r[2] = (byte)'1';
 				else if(key==Keys.PageUp)
 					r[2] = (byte)'5';
 				else if(key==Keys.Delete)
 					r[2] = (byte)'3';
 				else if(key==Keys.End)
-					r[2] = (byte)'8';
+					r[2] = (byte)'4';
 				else if(key==Keys.PageDown)
 					r[2] = (byte)'6';
 				else
