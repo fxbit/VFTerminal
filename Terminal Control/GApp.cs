@@ -185,59 +185,11 @@ namespace Poderosa
 
             try
             {
-                string optionfile = dir + "options.conf";
-                bool config_loaded = false;
-                bool macro_loaded = false;
-
-                TextReader reader = null;
-                try
-                {
-                    if (false)//File.Exists(optionfile)) 
-                    {
-                        reader = new StreamReader(File.Open(optionfile, FileMode.Open, FileAccess.Read), Encoding.Default);
-                        if (VerifyConfigHeader(reader))
-                        {
-                            ConfigNode root = new ConfigNode("root", reader).FindChildConfigNode("poderosa");
-                            if (root != null)
-                            {
-                                _options.Load(root);
-                                config_loaded = true;
-                                _history.Load(root);
-                                _macroManager.Load(root);
-                                macro_loaded = true;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //_errorOccurredOnBoot = true;
-                    Debug.WriteLine(ex.StackTrace);
-                    GUtil.WriteDebugLog(ex.StackTrace);
-                    act.AddMessage("Failed to read the configuration file.\n" + ex.Message);
-                }
-                finally
-                {
-                    if (!config_loaded) _options.Init();
-                    if (!macro_loaded) _macroManager.SetDefault();
-                    if (reader != null) reader.Close();
-                }
+                //init defaults
+                _options.Init();
+                _macroManager.SetDefault();
 
                 GEnv.Options = _options; //これでDefaultRenderProfileが初期化される
-
-                string kh = dir + "ssh_known_hosts";
-                if (File.Exists(kh))
-                {
-                    try
-                    {
-                        _sshKnownHosts.Load(kh);
-                    }
-                    catch (Exception ex)
-                    {
-                        _sshKnownHosts.Clear();
-                        act.AddMessage("Failed to read the 'ssh_known_hosts' file.\n" + ex.Message);
-                    }
-                }
             }
             finally
             {
@@ -262,50 +214,10 @@ namespace Poderosa
         private static void SaveEnvironment()
         {
 
-            //OptionDialogで、レジストリへの書き込み権限がないとOptionPreservePlaceは変更できないようにしてあるのでWritableなときだけ書いておけばOK
-            if (IsRegistryWritable)
-            {
-                RegistryKey g = Registry.CurrentUser.CreateSubKey(GCConst.REGISTRY_PATH);
-                g.SetValue("option-place", EnumDescAttribute.For(typeof(OptionPreservePlace)).GetName(_options.OptionPreservePlace));
-            }
-
             if (Win32.WaitForSingleObject(_globalMutex, 10000) != Win32.WAIT_OBJECT_0) throw new Exception("Global mutex lock error");
 
             try
-            {
-                string dir = GetOptionDirectory(_options.OptionPreservePlace);
-                TextWriter wr = null;
-                try
-                {
-                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-
-                    _sshKnownHosts.WriteTo(dir + "ssh_known_hosts");
-                    wr = new StreamWriter(dir + "options.conf", false, Encoding.Default);
-                }
-                catch (Exception ex)
-                {
-                    //GUtil.ReportCriticalError(ex);
-                    GUtil.Warning(Form.ActiveForm, String.Format(GApp.Strings.GetString("Message.GApp.WriteError"), ex.Message, dir));
-                }
-
-                if (wr != null)
-                {
-                    try
-                    {
-                        ConfigNode node = new ConfigNode("poderosa");
-                        _options.Save(node);
-                        _history.Save(node);
-                        _macroManager.Save(node);
-
-                        wr.WriteLine(GCConst.CONFIG_HEADER);
-                        node.WriteTo(wr);
-                        wr.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        GUtil.ReportCriticalError(ex);
-                    }
-                }
+            {                
             }
             finally
             {
@@ -460,17 +372,7 @@ namespace Poderosa
 
         private static OptionPreservePlace GetOptionPreservePlace()
         {
-            RegistryKey g = Registry.CurrentUser.OpenSubKey(GCConst.REGISTRY_PATH, false);
-            if (g == null)
-                return OptionPreservePlace.InstalledDir;
-            else
-            {
-                string v = (string)g.GetValue("option-place");
-                if (v == null || v.Length == 0)
-                    return OptionPreservePlace.InstalledDir;
-                else
-                    return (OptionPreservePlace)Enum.Parse(typeof(OptionPreservePlace), v);
-            }
+            return OptionPreservePlace.AppData;
         }
 
         public static ContainerConnectionCommandTarget GetConnectionCommandTarget()

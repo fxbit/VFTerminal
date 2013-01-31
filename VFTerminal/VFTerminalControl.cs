@@ -44,33 +44,37 @@ namespace VFTerminal.TerminalControl
             Task.Run(
                 () =>
                 {
-                    //connect
-                    terminalControl1.Connect(this);
-                    this.Invoke((MethodInvoker)(() => label1.Visible = false));
-                    
-
-                    //run callback
-                    if (OnConnectionFinish != null)
-                        OnConnectionFinish();
-
-                    //check results
-                    if (terminalControl1.TerminalPane.ConnectionTag == null)
+                    try
                     {
-                        isConnected = false;
-                        if (OnConnectionFailed != null)
-                            OnConnectionFailed();
-                    }
-                    else
-                    {
-                        isConnected = true;
-                        try
+                        //connect
+                        terminalControl1.Connect(this);
+                        this.Invoke((MethodInvoker)(() => label1.Visible = false));
+
+
+                        //run callback
+                        if (OnConnectionFinish != null)
+                            OnConnectionFinish();
+
+                        //check results
+                        if (terminalControl1.TerminalPane.ConnectionTag == null)
                         {
-                            terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black);
+                            isConnected = false;
+                            if (OnConnectionFailed != null)
+                                OnConnectionFailed();
                         }
-                        catch { }
-                        if (OnConnectionSuccessfull != null)
-                            OnConnectionSuccessfull();
+                        else
+                        {
+                            isConnected = true;
+                            try
+                            {
+                                terminalControl1.SetPaneColors(Color.FromArgb(255, 100, 255, 100), Color.Black);
+                            }
+                            catch { }
+                            if (OnConnectionSuccessfull != null)
+                                OnConnectionSuccessfull();
+                        }
                     }
+                    catch { }
                 }
             );
         }
