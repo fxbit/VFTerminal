@@ -16,8 +16,9 @@ namespace VFTerminal
     {
         #region Variables
         //-------------------------------------------------------------------------------------------------------------------------------
+        bool isLayoutLoaded = false;
 
-        string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Layout.xml");
+        string configFile;//= Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Layout.xml");
 
         private DeserializeDockContent m_deserializeDockContent;
 
@@ -37,10 +38,10 @@ namespace VFTerminal
 
         #region Constructor
         //-------------------------------------------------------------------------------------------------------------------------------
-        public MainFrm()
+        public MainFrm(string configFile)
         {
             InitializeComponent();
-
+            this.configFile = configFile;
             //decerialization helper
             m_deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
         }
@@ -61,6 +62,9 @@ namespace VFTerminal
 
         public virtual void LoadLayout()
         {
+            //set flag
+            isLayoutLoaded = true;
+
             //make me visible..
             this.Show();
 
@@ -158,6 +162,37 @@ namespace VFTerminal
             var frm = new DummyDoc(this);
             frm.Show(dockPanel);
             MakeFormVisible(frm);
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        private void saveLayoutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                return;
+
+            dockPanel.SaveAsXml(saveFileDialog1.FileName);
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        private void loadWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                return;
+
+            //set filname
+            configFile = openFileDialog1.FileName;
+
+            //load...
+            LoadLayout();
         }
         
         //-------------------------------------------------------------------------------------------------------------------------------
