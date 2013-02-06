@@ -16,7 +16,6 @@ namespace VFTerminal
     {
         #region Variables
         //-------------------------------------------------------------------------------------------------------------------------------
-        bool isLayoutLoaded = false;
 
         string configFile;//= Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Layout.xml");
 
@@ -31,6 +30,20 @@ namespace VFTerminal
             public string Text;
             public object Object_Descriptor;
         }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        [Serializable]
+        public struct WorkSpaceContainer
+        {
+            public bool isValid;
+            public MemoryStream Layout;
+        }
+        public WorkSpaceContainer WorkSpace = new WorkSpaceContainer()
+                                                    {
+                                                        isValid = false,
+                                                        Layout = null,
+                                                    };
 
         //-------------------------------------------------------------------------------------------------------------------------------
         #endregion
@@ -62,26 +75,12 @@ namespace VFTerminal
 
         public virtual void LoadLayout()
         {
-            //set flag
-            isLayoutLoaded = true;
-
             //make me visible..
             this.Show();
 
             //load user template
             if (File.Exists(configFile))
-                dockPanel.LoadFromXml(configFile, m_deserializeDockContent);
-            else
-            {
-                using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(Resources.DefaultLayout)))
-                {
-                    stream.Position = 0;
-                    dockPanel.LoadFromXml(stream, m_deserializeDockContent); //load default template
-                }
-            }
-
-            //get forms ( or load whatever is not loaded )
-            //MainViewport = Get_MainViewport_Instance();
+                LoadWorkspace(configFile);
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
@@ -123,7 +122,69 @@ namespace VFTerminal
 
         protected virtual void MainFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            dockPanel.SaveAsXml(configFile);
+            //TOOD: ask..
+            if (configFile == "")
+                return;
+
+            //serialize and save to file
+            SaveWorkspace(configFile);
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        public void SaveWorkspace(string filename)
+        {
+            //output final stream to file..
+            using (var fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            {
+                var ms = SerializeWorkspace();
+                ms.Position = 0;
+                ms.CopyTo(fs);
+                ms.Close(); ms.Dispose();
+            }
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        public MemoryStream SerializeWorkspace()
+        {
+            //clone workspace container
+            var container = WorkSpace;
+            container.isValid = true;
+            //create layout stream
+            using (var ms = new MemoryStream(1024 * 2))
+            {
+                //create layout(xml)
+                dockPanel.SaveAsXml(ms, Encoding.ASCII,true);
+                ms.Position = 0;
+                container.Layout = ms;
+                //serialize container to stream
+                var ser = Serialization_Master.Serializer.Serialize_Object(container, Compress: true);
+                ser.Position = 0;
+                return ser;
+            }            
+        }
+
+        
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        public void LoadWorkspace(string filename)
+        {
+            //read file            
+            using (var ms = new MemoryStream(1024 * 10))
+            {
+                //read to memory
+                using (var fs = new FileStream(configFile, FileMode.Open, FileAccess.Read))
+                    fs.CopyTo(ms);
+
+                //deserialize container
+                ms.Position = 0;
+                var container = (WorkSpaceContainer)Serialization_Master.Serializer.DeSerialize_Object(ms, Decompress: true);
+                //keep container
+                WorkSpace = container;
+                //load layout
+                dockPanel.LoadFromXml(container.Layout, m_deserializeDockContent);
+            }
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
@@ -175,21 +236,22 @@ namespace VFTerminal
 
         private void saveLayoutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            if (saveFileDialog_workspace.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
 
-            dockPanel.SaveAsXml(saveFileDialog1.FileName);
+            //serialize and save to file
+            SaveWorkspace(saveFileDialog_workspace.FileName);
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
 
         private void loadWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            if (openFileDialog_workspace.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
 
             //set filname
-            configFile = openFileDialog1.FileName;
+            configFile = openFileDialog_workspace.FileName;
 
             //load...
             LoadLayout();
