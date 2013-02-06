@@ -35,7 +35,7 @@ namespace VFTerminal
 
         //----------------------------------------------------------------------------------------------------------------------
 
-        public Profile SelectedProfile = new Profile();
+        public string SelectedProfile = "";
 
         //----------------------------------------------------------------------------------------------------------------------
 
@@ -46,10 +46,10 @@ namespace VFTerminal
                 try
                 {
                     //load..
-                    Profiles = (Dictionary<string, Profile>)Serialization_Master.Serializer.DeSerialize_Object_From_File("profiles.bin", Decompress: true);
+                    //Profiles = (Dictionary<string, Profile>)Serialization_Master.Serializer.DeSerialize_Object_From_File("profiles.bin", Decompress: true);
                     //check..
-                    if (Profiles == null)
-                        Profiles = new Dictionary<string, Profile>();
+                    //if (Profiles == null)
+                    //    Profiles = new Dictionary<string, Profile>();
                 }
                 catch
                 {
@@ -59,13 +59,9 @@ namespace VFTerminal
 
         //----------------------------------------------------------------------------------------------------------------------
 
-        public LoginDialog(Profile desc)
+        public LoginDialog()
         {
             InitializeComponent();
-            //setup items from descriptor
-            txt_server.Text = desc.Server;
-            txt_username.Text = desc.Username;
-            txt_server.Text = desc.Password;            
         }
         
         //----------------------------------------------------------------------------------------------------------------------
@@ -94,7 +90,7 @@ namespace VFTerminal
                 MessageBox.Show("You must select a profile", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            SelectedProfile = (Profile)listBox1.SelectedItem;
+            SelectedProfile = ((Profile)listBox1.SelectedItem).ProfileName;
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
@@ -144,7 +140,7 @@ namespace VFTerminal
             //save/overwrite file
             lock (Profiles)
             {
-                Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
+                //Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
             }
 
             //refresh list
@@ -171,7 +167,7 @@ namespace VFTerminal
                 if (Profiles.ContainsKey(profile.ProfileName))
                 {
                     Profiles.Remove(profile.ProfileName);
-                    Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
+                    //Serialization_Master.Serializer.Serialize_Object_to_File(Profiles, "profiles.bin", Compress: true, overwrite: true);
                 }
             }
 

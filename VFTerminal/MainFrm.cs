@@ -36,14 +36,9 @@ namespace VFTerminal
         [Serializable]
         public struct WorkSpaceContainer
         {
-            public bool isValid;
             public MemoryStream Layout;
+            public Dictionary<string, VFTerminal.LoginDialog.Profile> Profiles;
         }
-        public WorkSpaceContainer WorkSpace = new WorkSpaceContainer()
-                                                    {
-                                                        isValid = false,
-                                                        Layout = null,
-                                                    };
 
         //-------------------------------------------------------------------------------------------------------------------------------
         #endregion
@@ -127,7 +122,7 @@ namespace VFTerminal
                 return;
 
             //serialize and save to file
-            SaveWorkspace(configFile);
+            //?
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------
@@ -149,8 +144,7 @@ namespace VFTerminal
         public MemoryStream SerializeWorkspace()
         {
             //clone workspace container
-            var container = WorkSpace;
-            container.isValid = true;
+            var container = new WorkSpaceContainer();
             //create layout stream
             using (var ms = new MemoryStream(1024 * 2))
             {
@@ -158,6 +152,8 @@ namespace VFTerminal
                 dockPanel.SaveAsXml(ms, Encoding.ASCII,true);
                 ms.Position = 0;
                 container.Layout = ms;
+                //collect profiles
+                container.Profiles = LoginDialog.Profiles;
                 //serialize container to stream
                 var ser = Serialization_Master.Serializer.Serialize_Object(container, Compress: true);
                 ser.Position = 0;
@@ -180,10 +176,10 @@ namespace VFTerminal
                 //deserialize container
                 ms.Position = 0;
                 var container = (WorkSpaceContainer)Serialization_Master.Serializer.DeSerialize_Object(ms, Decompress: true);
-                //keep container
-                WorkSpace = container;
                 //load layout
                 dockPanel.LoadFromXml(container.Layout, m_deserializeDockContent);
+                //retore profiles..
+                LoginDialog.Profiles = container.Profiles;
             }
         }
 
@@ -255,6 +251,23 @@ namespace VFTerminal
 
             //load...
             LoadLayout();
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+        private void saveWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TOOD: ask..
+            if (configFile == "")
+            {
+                if (saveFileDialog_workspace.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                    return;
+                else
+                    configFile = saveFileDialog_workspace.FileName;
+            }
+
+            //serialize and save to file
+            SaveWorkspace(configFile);
         }
         
         //-------------------------------------------------------------------------------------------------------------------------------

@@ -21,16 +21,13 @@ namespace VFTerminal
         public struct SaveLoadDescriptor
         {
             public bool isValid;
-            public LoginDialog.Profile LoginProfile;
+            public string LoginProfile;
         }
 
         SaveLoadDescriptor Descriptor = new SaveLoadDescriptor()
         {
             isValid = true,
-            LoginProfile = new LoginDialog.Profile()
-            {
-                isValid=false,
-            }
+            LoginProfile = "",
         };
         //-------------------------------------------------------------------------------------------------------------------------------
         #endregion
@@ -85,10 +82,10 @@ namespace VFTerminal
             //stop..
             timer1.Enabled = false;
 
-            if (Descriptor.LoginProfile.isValid == false)
+            if (Descriptor.LoginProfile == "" || LoginDialog.Profiles.ContainsKey(Descriptor.LoginProfile) == false)
             {
                 //ask..
-                var frm = new LoginDialog(Descriptor.LoginProfile);
+                var frm = new LoginDialog();
                 if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     Descriptor.LoginProfile = frm.SelectedProfile;
                 else
@@ -99,9 +96,10 @@ namespace VFTerminal
             }
 
             //attempt connection
-            this.vfTerminalControl1.UserName = Descriptor.LoginProfile.Username;
-            this.vfTerminalControl1.Password = Descriptor.LoginProfile.Password;
-            this.vfTerminalControl1.Host = Descriptor.LoginProfile.Server;
+            var profile = LoginDialog.Profiles[Descriptor.LoginProfile];
+            this.vfTerminalControl1.UserName = profile.Username;
+            this.vfTerminalControl1.Password = profile.Password;
+            this.vfTerminalControl1.Host = profile.Server;
             this.vfTerminalControl1.Method = WalburySoftware.ConnectionMethod.SSH2;
                         
             this.vfTerminalControl1.ConnectAsync();
