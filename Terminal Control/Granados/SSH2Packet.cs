@@ -62,9 +62,13 @@ namespace Granados.SSHCV2
 			
 			if(_mac!=null)
 				Array.Copy(_mac, 0, buf, bodylen, _mac.Length);
-			
-			strm.Write(buf, 0, buf.Length);
-			strm.Flush();
+
+            try
+            {
+                strm.Write(buf, 0, buf.Length);
+                strm.Flush();
+            }
+            catch { }
 		}
 		public void WriteTo(byte[] buf, int offset, bool includes_mac) {
 			SSHUtil.WriteIntToByteArray(buf, offset, _packetLength);

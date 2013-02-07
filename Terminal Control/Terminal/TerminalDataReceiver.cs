@@ -137,16 +137,21 @@ namespace Poderosa.Terminal
 			_transientScrollBarDirty = true;
 		}
 
-		public void CommitScrollBar(VScrollBar sb, bool dirty_only) {
-			if(dirty_only && !_transientScrollBarDirty) return;
+		public void CommitScrollBar(VScrollBar sb, bool dirty_only)         
+        {
+            try
+            {
+                if (dirty_only && !_transientScrollBarDirty) return;
 
-			sb.Enabled = _transientScrollBarEnabled;
-			sb.Maximum = _transientScrollBarMaximum;
-			sb.LargeChange = _transientScrollBarLargeChange;
-			//!!本来このif文は不要なはずだが、範囲エラーになるケースが見受けられた。その原因を探ってリリース直前にいろいろいじるのは危険なのでここは逃げる。後でちゃんと解明する。
-			if(_transientScrollBarValue < _transientScrollBarMaximum)
-				sb.Value = _transientScrollBarValue;
-			_transientScrollBarDirty = false;
+                sb.Enabled = _transientScrollBarEnabled;
+                sb.Maximum = _transientScrollBarMaximum;
+                sb.LargeChange = _transientScrollBarLargeChange;
+                //!!本来このif文は不要なはずだが、範囲エラーになるケースが見受けられた。その原因を探ってリリース直前にいろいろいじるのは危険なのでここは逃げる。後でちゃんと解明する。
+                if (_transientScrollBarValue < _transientScrollBarMaximum)
+                    sb.Value = _transientScrollBarValue;
+                _transientScrollBarDirty = false;
+            }
+            catch { }
 		}
 
 		public void ErrorOccurred(string msg) {
