@@ -74,7 +74,11 @@ namespace VFTerminal.TerminalControl
                                 OnConnectionSuccessfull();
                         }
                     }
-                    catch { }
+                    catch (Exception ex) { 
+                        MessageBox.Show(ex.Message); 
+                        // TODO: send failed cb to upper layer 
+                    }
+                    
                 }
             );
         }

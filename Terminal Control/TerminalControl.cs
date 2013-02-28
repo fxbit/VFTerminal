@@ -88,54 +88,52 @@ namespace WalburySoftware
                 this.TerminalPane.Detach();
             }
 
-            try
-            {
-                //------------------------------------------------------------------------
-                SSHTerminalParam sshp = new SSHTerminalParam((Poderosa.ConnectionParam.ConnectionMethod)this.Method, this.Host, this.UserName, this.Password);
-                sshp.AuthType = this.AuthType;
-                sshp.IdentityFile = this.IdentifyFile;
-                sshp.Encoding = EncodingType.ISO8859_1;
-                sshp.Port = 22;
-                sshp.RenderProfile = new RenderProfile();
-                sshp.TerminalType = TerminalType.XTerm;
+            //------------------------------------------------------------------------
+            SSHTerminalParam sshp = new SSHTerminalParam((Poderosa.ConnectionParam.ConnectionMethod)this.Method, this.Host, this.UserName, this.Password);
+            sshp.AuthType = this.AuthType;
+            sshp.IdentityFile = this.IdentifyFile;
+            sshp.Encoding = EncodingType.ISO8859_1;
+            sshp.Port = 22;
+            sshp.RenderProfile = new RenderProfile();
+            sshp.TerminalType = TerminalType.XTerm;
 
-                CommunicationUtil.SilentClient s = new CommunicationUtil.SilentClient();
-                Size sz = this.Size;
+            CommunicationUtil.SilentClient s = new CommunicationUtil.SilentClient();
+            Size sz = this.Size;
 
-                SocketWithTimeout swt;
-                swt = new SSHConnector((Poderosa.ConnectionParam.SSHTerminalParam)sshp, sz, sshp.Passphrase, (HostKeyCheckCallback)null);
-                swt.AsyncConnect(s, sshp.Host, sshp.Port);
-                //var thread = new Thread(() =>
-                //    {
-                        while (swt.Succeeded == false)
+            SocketWithTimeout swt;
+            swt = new SSHConnector((Poderosa.ConnectionParam.SSHTerminalParam)sshp, sz, sshp.Passphrase, (HostKeyCheckCallback)null);
+            swt.AsyncConnect(s, sshp.Host, sshp.Port);
+            //var thread = new Thread(() =>
+            //    {
+                    while (swt.Succeeded == false && swt.ErrorMessage == null)
+                    {
+                        Application.DoEvents();
+                    }
+
+                    if (swt.ErrorMessage != null)
+                    {
+                        throw new System.Exception("Connection Error:" + swt.ErrorMessage);
+                    }
+
+                    ct = s.Wait(swt);
+
+                    control.Invoke((MethodInvoker)(
+                        () =>
                         {
-                            Application.DoEvents();
+                            this.TerminalPane.FakeVisible = true;
+
+                            this.TerminalPane.Attach(ct);
+                            ct.Receiver.Listen();
+                            //-------------------------------------------------------------
+                            if (file != null)
+                                this.SetLog((LogType)logType, file, true);
+                            this.TerminalPane.ConnectionTag.RenderProfile = new RenderProfile();
+                            this.SetPaneColors(Color.LightBlue, Color.Black);
                         }
-                        ct = s.Wait(swt);
-
-                        control.Invoke((MethodInvoker)(
-                            () =>
-                            {
-                                this.TerminalPane.FakeVisible = true;
-
-                                this.TerminalPane.Attach(ct);
-                                ct.Receiver.Listen();
-                                //-------------------------------------------------------------
-                                if (file != null)
-                                    this.SetLog((LogType)logType, file, true);
-                                this.TerminalPane.ConnectionTag.RenderProfile = new RenderProfile();
-                                this.SetPaneColors(Color.LightBlue, Color.Black);
-                            }
-                            ));
-                 //   });
-                //start thread
-                //thread.Start();
-            }
-            catch
-            {
-                //MessageBox.Show(e.Message, "Connection Error");
-                return;
-            }
+                        ));
+                //   });
+            //start thread
+            //thread.Start();
         }
         public void Close()
         {
